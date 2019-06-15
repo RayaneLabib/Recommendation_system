@@ -12,35 +12,7 @@ import random
 
 NB_CLUSTERS = 20
 
-# def readFromCSV(file, delimiter=";"):
-#     csvFile = open(file, "r", encoding='UTF')
-#     line = csvFile.readline()
-#     tmp = line.split(delimiter)
-#     matrix = np.array([[int(tmp[1]), int(tmp[2]), int(tmp[3]), int(
-#         tmp[4]), float(tmp[5]), float(tmp[6]), int(tmp[7])]])
-#     counter = 1
-#     tmp_time = start
-#     file_content = []
-#     for line in csvFile:
-#         counter += 1
-#         tmp_time = time.time() - tmp_time
-#         print('line number :', counter, ' & time:',
-#               time.time() - start, end="\r")
-#         file_content.append(line)
-#     csvFile.close()
-#     counter = 0
-#     nb_el_file = len(file_content)
-#     for tmp in file_content:
-#         counter += 1
-#         tmp_time = time.time() - tmp_time
-#         print('element number :', counter,"/",nb_el_file, ' & time:',
-#               time.time() - start, end="\r")
-#         tmp = line.split(delimiter)
-#         # print(tmp[1],tmp[2],tmp[3],tmp[4],tmp[7])
-#         matrix = np.concatenate((matrix, np.array([[int(tmp[1]), int(tmp[2]), float(
-#             tmp[3]), float(tmp[4]), float(tmp[5]), float(tmp[6]), int(float(tmp[7]))]])))
-#     print(matrix)
-#     return matrix
+
 
 def readFromCSV(file, delimiter=";"):
     csvFile = open(file, "r", encoding='UTF')
@@ -48,8 +20,7 @@ def readFromCSV(file, delimiter=";"):
     tmp = line.split(delimiter)
     matrix = np.array([[int(tmp[1]), int(tmp[2]), int(tmp[3]),
         float(tmp[4]), float(tmp[5]), int(tmp[6])]])
-    #matrix = np.array([[int(tmp[1]), int(tmp[2]), int(tmp[3]), int(
-    #    tmp[4]), float(tmp[5]), float(tmp[6]), int(tmp[7])]])
+
     counter = 1
     somme = 0
     tmp_time = start
@@ -60,24 +31,14 @@ def readFromCSV(file, delimiter=";"):
         print('line number :', counter, ' & time:',
               time.time() - start, end="\r")
         tmp = line.split(delimiter)
-        # print(tmp[1],tmp[2],tmp[3],tmp[4],tmp[7])
-        #matrix = np.concatenate((matrix, np.array([[int(tmp[1]), int(tmp[2]), float(
-        #    tmp[3]), float(tmp[4]), float(tmp[5]), float(tmp[6]), int(float(tmp[7]))]])))
+
         matrix = np.concatenate((matrix, np.array([[int(tmp[1]), int(tmp[2]), float(
             tmp[3]), float(tmp[4]), float(tmp[5]), int(float(tmp[6]))]])))
     csvFile.close()
     return matrix
 def getPropertyType(type):
     dict = {"['HOUSE']": 0,
-            "['APARTMENT']": 1}  # ,
-    # "['GROUND']":2,\
-    # "['INVESTMENT_PROPERTY']":3,\
-    # "['COMMERCIAL']":4,\
-    # "['OTHER']":5,\
-    # "['INDUSTRIES']":6,\
-    # "['CAR_PLACES']":7,\
-    # "['OFFICES']":8,\
-    # "['ACQUISITIONS']":9}
+            "['APARTMENT']": 1}
     if type in dict:
         return dict[type]
     return -1
@@ -135,7 +96,7 @@ if __name__ == '__main__':
     kmeans_model = KMeans(n_clusters=4, random_state=0, n_jobs=-1).fit(X)
     kmeans = kmeans_model.predict(X)
     kmean = np.array(kmeans)
-    # visualizeData(X,kmean,'kmeans')
+    
     print('time before kmeans algorithm :', time.time() - start, end="\n")
 
     outputLabels(X,kmeans,"separation.csv",scaler)
@@ -145,9 +106,8 @@ if __name__ == '__main__':
     scaler = StandardScaler()
     X[:, [2, 5]] = scaler.fit_transform(X[:, [2, 5]])
 
-    X = X[kmean == 3][:]   
+    X = X[kmean == 3][:]
     print(X)
-    #K-means application on case house/buye
     print(len(X))
     dist_intra = np.zeros(NB_CLUSTERS)
     dist_inter = np.zeros(NB_CLUSTERS)
@@ -182,29 +142,5 @@ if __name__ == '__main__':
     print(np.average(silhouette_samples(X, kmeans)))
     print('time before kmeans algorithm :', time.time() - start, end="\n")
     kmean = np.array(kmeans)
-   
+
     outputLabels(X,kmeans,"clustering-location_house3.csv",scaler)
-    
-    #visualizeData(X, kmean, 'kmeans')
-
-    # # DBSCAN application
-    # print('time before dbscan algorithm:', time.time() - start, end="\n")
-    # dbscan_clusters = DBSCAN(eps=0.01, min_samples=50, n_jobs=-1).fit_predict(X)
-    # print('time after dbscan algorithm:', time.time() - start, end="\n")
-    # dbscan_labels = np.array(dbscan_clusters)
-
-    # outputLabels(X,dbscan_clusters,"clustering-dbscan.csv",scaler)
-    
-    # #visualizeData(X,dbscan_labels,'DBSCAN')
-
-
-    # # Hierarchical clustering application
-    # print('time before hierarchical clustering algorithm:', time.time() - start, end="\n")
-    # hierarchical_clusters = AgglomerativeClustering(n_clusters=7, linkage='single').fit_predict(X)
-    # print('time after hierarchical clustering algorithm:', time.time() - start, end="\n")
-    # hierarchical_labels = np.array(hierarchical_clusters)
-
-
-    # outputLabels(X,hierarchical_clusters,"clustering-hierarchical.csv",scaler)
-
-    # #visualizeData(X,hierarchical_labels,'hierarchical clustering')

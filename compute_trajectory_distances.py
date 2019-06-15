@@ -38,11 +38,11 @@ def make_trajectory_matrix():
 
     #extraction of all IPs and assignement of an index value to each of them
     ip_dict = {}
-    
+
     data = []
     row = []
     col = []
-    
+
     nb_ip_kept = 0
     nb_to_remove = 0
     for i in range(0,nb_ip):
@@ -70,7 +70,7 @@ def make_trajectory_matrix():
 
     return visited_properties_matrix, nb_ip_kept, nb_properties
 
-if __name__ == "__main__":  
+if __name__ == "__main__":
     visited_properties_matrix, nb_ip_kept, nb_properties = make_trajectory_matrix()
     non_zero_cells_ids = visited_properties_matrix.nonzero()
 
@@ -85,15 +85,15 @@ if __name__ == "__main__":
             counter += 1
         else:
             train_set_id[0].append(non_zero_cells_ids[0][i])
-            train_set_id[1].append(non_zero_cells_ids[1][i])            
-    
+            train_set_id[1].append(non_zero_cells_ids[1][i])
+
     print(counter,"/",int(len(non_zero_cells_ids[0])*0.15))
 
     print("learning_rate :",LEARNING_RATE)
     print("regularisation_rate :",REGULARISATION_RATE)
     P = np.random.rand(nb_ip_kept,NB_FEATURES)
     Q = np.random.rand(NB_FEATURES,nb_properties)
-    
+
     error = 0
     for k in range(len(train_set_id[0])):
         i = train_set_id[0][k]
@@ -109,7 +109,7 @@ if __name__ == "__main__":
         val = np.inner(P[i,:],Q[:,j])
         test_set_error += (visited_properties_matrix[i,j] - val)**2 #+ REGULARISATION_RATE * (np.linalg.norm(P[i,:])**2 + np.linalg.norm(Q[:,j])**2)
     print("test set error term :",test_set_error)
-    
+
     start = time.time()
     nb_iter = 1
     while error > 1 and nb_iter <= 1000:
@@ -152,9 +152,9 @@ if __name__ == "__main__":
                     grad_P[i,k] = LEARNING_RATE * (-2 * (visited_properties_matrix[i,j] - val) * Q[k,j] + 2 * REGULARISATION_RATE * (norm_P[i]))
                     grad_Q[k,j] = LEARNING_RATE * (-2 * (visited_properties_matrix[i,j] - val) * P[i,k] + 2 * REGULARISATION_RATE * (norm_Q[j]))
             return grad_P, grad_Q
-        
+
         start = time.time()
-        grad_P, grad_Q = compute(tuple(train_set_id), len(train_set_id[0]), NB_FEATURES, LEARNING_RATE, visited_properties_matrix.todense(), REGULARISATION_RATE, P, Q, np.linalg.norm(P,axis=1), np.linalg.norm(Q,axis=0),grad_P,grad_Q)        
+        grad_P, grad_Q = compute(tuple(train_set_id), len(train_set_id[0]), NB_FEATURES, LEARNING_RATE, visited_properties_matrix.todense(), REGULARISATION_RATE, P, Q, np.linalg.norm(P,axis=1), np.linalg.norm(Q,axis=0),grad_P,grad_Q)
         print("Compute time:", time.time() - start)
         """
         for l in range(len(non_zero_cells_ids[0])):
@@ -183,8 +183,8 @@ if __name__ == "__main__":
         print("percentage of correct values for train set :", nb_correct_result/len(train_set_id[0])*100)
 
         for i in range(nb_ip_kept):
-            regularisation_term += REGULARISATION_RATE * np.linalg.norm(P[i,:])**2 
-        
+            regularisation_term += REGULARISATION_RATE * np.linalg.norm(P[i,:])**2
+
         for j in range(nb_properties):
             regularisation_term += REGULARISATION_RATE * np.linalg.norm(Q[:,j])**2
         print("regularization term :",regularisation_term)
@@ -220,28 +220,8 @@ if __name__ == "__main__":
                     nb_empty_col += 1
                 flag_filled = 0
             return nb_zero,nb_one,nb_empty_col
-        # nb_zero = 0
-        # nb_one = 0
-        # for a in range(nb_ip_kept):
-        #     for b in range(nb_properties):
-        #         val = np.inner(P[a,:],Q[:,b])
-        #         if np.sign(val-0.5) == 1:
-        #             nb_one+=1
-        #         if np.sign(val-0.5) == 0:
-        #             nb_zero+=1
+        
         nb_zero,nb_one, nb_empty_col = compute_values(P,Q,nb_ip_kept,nb_properties,NB_FEATURES,visited_properties_matrix.todense())
         print("nb zero :", nb_zero)
         print("nb one :", nb_one)
         print("nb empty col :", nb_empty_col/nb_properties)
-    # kmeans_model = KMeans(n_clusters=4, random_state=0, n_jobs=-1).fit(visited_properties_matrix)
-    # kmeans = kmeans_model.predict(visited_properties_matrix)
-
-    # print(kmeans)
-    # print(nb_found_goods)
-    # print(nb_missing_goods)
-    # print(nb_ip_kept)
-    # print(visited_properties_matrix)
-                
-    # for key,val in properties_dict.items():
-    #     if val == 6827:
-    #         print(key)

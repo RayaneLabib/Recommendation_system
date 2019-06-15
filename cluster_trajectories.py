@@ -14,31 +14,7 @@ if __name__ == "__main__":
     kmeans_model = KMeans(n_clusters=51, random_state=0, n_jobs=-1).fit(visited_properties_matrix)
     kmeans = kmeans_model.predict(visited_properties_matrix)
     kmean = np.array(kmeans)
-    # start = time.time()
-    # dist_intra = np.zeros(NB_CLUSTERS)
-    # dist_inter = np.zeros(NB_CLUSTERS)
-    # for i in range(1,NB_CLUSTERS+1):
-    #     print('time before kmeans algorithm for k =',i,':', time.time() - start, end="\n")
-    #     kmeans_model = KMeans(n_clusters=i, random_state=0, n_jobs=-1).fit(visited_properties_matrix)
-    #     kmeans  = kmeans_model.predict(visited_properties_matrix)
-    #     print('time after kmeans algorithm for k =',i,':', time.time() - start, end="\n")
-    #     kmean = np.array(kmeans)
-    #     for j in range(0,i*10):
-    #         dist_intra[i-1] += np.sum(euclidean_distances(visited_properties_matrix[kmean==j][:], [kmeans_model.cluster_centers_[j]], squared=True))
-            # dist_inter[i-1] += np.sum(euclidean_distances(kmeans_model.cluster_centers_, [kmeans_model.cluster_centers_[j]], squared=True))
-        # tmp = dist_intra[i-1]
-        # print(tmp)
-        #dist_intra[i-1] = tmp/previous
-        # print(dist_intra[i-1])
-        # previous = tmp
-    # print(kmeans)
-    # print(visited_properties_matrix)
-    # xi = [i*10 for i in range(1, NB_CLUSTERS+1)]
-    # plt.plot(xi, dist_intra,'o-')
-    # plt.show()
-    # plt.plot(xi,dist_inter,'ro-')
-    # plt.show()
-    # visited_properties_matrix = visited_properties_matrix.tocsr()
+
     properties_characteristics = []
 
     property_file  = open("properties.csv")
@@ -51,7 +27,6 @@ if __name__ == "__main__":
     open("clustering-trajectories.csv","w").close()
     clustering_file = open("clustering-trajectories.csv","a")
     print(kmean[kmean==50])
-    # print(visited_properties_matrix)
     for i in range(51):
         print(i)
         X = visited_properties_matrix[kmean == i][:]
@@ -60,8 +35,5 @@ if __name__ == "__main__":
             for k in range(len(properties_characteristics[j])):
                 clustering_file.write(str(properties_characteristics[j][k])+";")
             clustering_file.write(str(i)+"\n")
-        # print(properties_id)
-
     clustering_file.close()
     
-    # print(properties_characteristics)

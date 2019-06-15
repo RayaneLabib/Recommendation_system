@@ -19,7 +19,7 @@ def extractJsonObject(jsonObject, key):
     jsonObject.update(jsonObject[key])
     jsonObject.pop(key, None)
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     # clean the existing files and open them to write in them
     open("cleanedLogs", "w").close()
     open("ipList", "w").close()
@@ -42,9 +42,6 @@ if __name__ == "__main__":
                 if "method" in line:
                     jsonObject = json.loads(line)
                     extractJsonObject(jsonObject, "body")
-                    # if (jsonObject["method"] == "POST" and (("monitoring" in jsonObject["path"] and
-                    #                                          "value" in jsonObject and "image" in jsonObject["value"])or ("search" in jsonObject["path"] and jsonObject["start"] == 0
-                    #                                                                                                       and "propertyType" in jsonObject and "transferType" in jsonObject)))\
                     if "header_x-gu" in jsonObject and jsonObject["header_x-gu"] != "" and jsonObject["method"] == "GET" and "v1/properties" in jsonObject["path"] and "ref" not in jsonObject["path"]:
                         for key in UNUSED_KEYS:
                             jsonObject.pop(key, None)
@@ -94,11 +91,11 @@ if __name__ == "__main__":
             open("stepByStep"+str(nb_file)+".csv", "w").close()
             stepFile = open("stepByStep"+str(nb_file)+".csv", "a", encoding='UTF')
         if len(ipDict[ip]) > 3:
-            stepFile.write(ip+";")        
+            stepFile.write(ip+";")
             for i in range(len(ipDict[ip])):
                 stepFile.write(str(ipDict[ip][i])+";")
             stepFile.write("\n")
             nb_line += 1
-        
+
     cleanedFile.close()
     stepFile.close()

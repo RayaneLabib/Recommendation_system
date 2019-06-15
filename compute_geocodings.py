@@ -1,23 +1,23 @@
 from bs4 import BeautifulSoup as Soup
 import re, nltk, os, unidecode, requests
 import time
- 
+
 
 def get_geocodings(geocoding_file,url,site,translationDictionary,coord_type):
 
 	response = requests.get(url)
-	soup = Soup(response.text, features="html.parser") 
+	soup = Soup(response.text, features="html.parser")
 
 	toDecompose = soup.find_all(["h2","h1"])
 	for i in range(0,len(toDecompose)):
 		toDecompose[i].decompose()
-		
+
 	pc_list = soup.find("div",class_="mw-parser-output").find_all("ul",recursive="",limit=13)
 
 	start = time.time()
 	count1 = 0
 	for tmp in pc_list:
-		sub_pc_list = tmp.find_all("li") 
+		sub_pc_list = tmp.find_all("li")
 		count1 += 1
 		count2 = 0
 		for tmp2 in sub_pc_list:
@@ -35,15 +35,15 @@ def get_geocodings(geocoding_file,url,site,translationDictionary,coord_type):
 				tmp_split = tmp2.text.split(" ")
 			if tmp_split[0].replace("\n","").isdigit():
 				pc = tmp_split[0]
-				
+
 			if tmp2.a != None and has_city:
 				city_name = tmp2.a.text
 				page = tmp2.a["href"]
 				try:
 					response = requests.get(site+page)
 					soup = Soup(response.text, features="html.parser")
-					
-					if coord_type == "fr" : 
+
+					if coord_type == "fr" :
 						if soup.span != None and soup.span.a != None:
 							lat = soup.span.a["data-lat"]
 							lon = soup.span.a["data-lon"]
@@ -52,36 +52,18 @@ def get_geocodings(geocoding_file,url,site,translationDictionary,coord_type):
 								geocoding_file.write(translationDictionary[city_name]+";"+pc+";"+lat+";"+lon+"\n")
 						else:
 							print(city_name)
-					# elif coord_type == "nl":
-						# if soup.find("a",class_="external text") != None:
-							# tmp = soup.find("a",class_="external text").text.split(",")
-							
-							# if len(tmp) == 2:
-								# tmp_lat = tmp[0]
-								# tmp_lon = tmp[1]
-
-								# lat =  tmp_lat.split("°")
-								# lon =  tmp_lon.split("°")
-								# if len(lat) == 2 and len(lon) == 2:
-									# lat = lat[0]+"."+lat[1].split("′")[0].replace(" ","")
-									# lon = lon[0]+"."+lon[1].split("′")[0].replace(" ","")
-									# geocoding_file.write(city_name+";"+pc+";"+lat+";"+lon+"\n")
-							# else:
-								# print(city_name)
-						# else:
-							# print(city_name)
 				except (KeyError,requests.ConnectionError) as err:
 					print(city_name)
 
-if __name__ == '__main__':	
-	
+if __name__ == '__main__':
+
 	open("geocodings.csv","w").close()
 	geocoding_file = open("geocodings.csv","a",encoding="UTF")
-	
+
 	site = "https://fr.wikipedia.org/wiki/Liste_des_communes_belges_et_leur_traduction"
 
 	response = requests.get(site)
-	soup = Soup(response.text, features="html.parser") 
+	soup = Soup(response.text, features="html.parser")
 
 	tmp = soup.find_all("tbody")
 	brusselRegion = tmp[0].find_all("td")
@@ -100,8 +82,8 @@ if __name__ == '__main__':
 	for i in range(0,len(walloonRegion),8):
 		if walloonRegion[i+4].text.replace("\n","") != "":
 			dict[walloonRegion[i].text.replace("\n","")] = walloonRegion[i+4].text.replace("\n","")
-	
-	
+
+
 	url = "https://fr.wikipedia.org/wiki/Liste_des_codes_postaux_belges"
 	site = "https://fr.wikipedia.org"
 	get_geocodings(geocoding_file,url,site,dict,"fr")
